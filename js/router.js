@@ -1,33 +1,26 @@
 var Router = function()
 {
-	this.targetContainer = null;
-	this.routes = {};
+	this.routes = [];
+	this.bindings = {};
+
+	this.bindToContext(window, "hashchange", this.Route, this);
+	this.Route();
 }
 
-Router.prototype.Bind = function(container)
+Router.prototype.AddPath = function(hash)
 {
-	this.targetContainer = container;
+	this.routes.push(hash);
 }
 
-Router.prototype.AddPath = function(hash, position, options)
+Router.prototype.On = function(hash, callback)
 {
-	this.routes[hash] = position;
+	this.bindings[hash] = callback;
 }
 
 Router.prototype.Route = function(e)
 {
-	var url = location.hash;
-	console.log(url);
-	this.targetContainer.animate({
-		left : this.routes[url]
-	},
-	{
+	var hash = location.hash.substr(1);
 
-	});
-}
-
-Router.prototype.Start = function()
-{
-	$(window).bind("hashchange", this.Route);
-	this.Route();
+	if (typeof this.bindings[hash] !== "undefined")
+		this.bindings[hash]();
 }

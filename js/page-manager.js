@@ -1,5 +1,10 @@
 var PageManager = function(container, pages, titles)
 {
+	// CONSTANTS
+	this.regexpFilename = /[\w-]+(?=\.)/g;
+
+	// END CONSTANTS
+
 	// Initialize everything
 	this.container = container;
 	this.pages = pages;
@@ -7,7 +12,8 @@ var PageManager = function(container, pages, titles)
 	this.pageSlider = $("<div></div>")
 						.css({
 							width : "100%",
-							height : "100%"
+							height : "100%",
+							position : "absolute"
 						})
 						.appendTo(container);
 
@@ -15,11 +21,12 @@ var PageManager = function(container, pages, titles)
 	// we may not need this but that way we have it
 	this.frames = [];
 
+	// Get the width here to avoid recalculation
+	var pageSliderWidth = this.pageSlider.width();
+
 	// Attach all our pages to the container as iframes
 	for (var p = 0; p < pages.length; p++)
 	{
-		var pageSliderWidth = this.pageSlider.width();
-
 		// Create our frame and add it to the container
 		var pageFrame = 
 			$("<iframe src='" + pages[p] + "'></iframe>")
@@ -39,14 +46,33 @@ var PageManager = function(container, pages, titles)
 
 	// Make sure that this whole thing can adjust, since we can't
 	// rely on CSS to do this right in this case
-	this.BindToMe("resize", this.Resize, this);
+	this.bindToContext(window, "resize", this.Resize, this);
 }
 
-PageManager.prototype.BindToMe = function(event, callback, context)
+PageManager.prototype.GetPageIndexByName = function(name)
 {
-	$(window).bind(event, function(e)
+	for (var p = 0; p < this.pages.length; p++)
 	{
-		callback.call(context);
+		var pageName = (this.pages[p].match(this.regexpFilename) || [""])[0];
+		if (pageName === name)
+			return p;
+	}
+
+	return 0;
+}
+
+PageManager.prototype.GoToPage = function(pageName)
+{
+	var index = this.GetPageIndexByName(pageName);
+	var pos = -index * this.pageSlider.width();
+
+	console.log(pos);
+
+	this.pageSlider.animate({
+		left : pos
+	},
+	{
+
 	});
 }
 
