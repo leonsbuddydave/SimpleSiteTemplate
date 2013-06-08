@@ -1,8 +1,9 @@
-var PageManager = function(container, pages)
+var PageManager = function(container, pages, titles)
 {
 	// Initialize everything
 	this.container = container;
 	this.pages = pages;
+	this.titles = titles;
 	this.pageSlider = $("<div></div>")
 						.css({
 							width : "100%",
