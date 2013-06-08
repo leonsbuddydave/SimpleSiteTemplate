@@ -4,7 +4,7 @@ var Router = function()
 	this.bindings = {};
 
 	this.bindToContext(window, "hashchange", this.Route, this);
-	this.Route();
+	this.bindToContext(window, "ready", this.Route, this);
 }
 
 Router.prototype.AddPath = function(hash)

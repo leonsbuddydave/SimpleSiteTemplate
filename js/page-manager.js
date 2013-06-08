@@ -2,7 +2,6 @@ var PageManager = function(container, pages, titles)
 {
 	// CONSTANTS
 	this.regexpFilename = /[\w-]+(?=\.)/g;
-
 	// END CONSTANTS
 
 	// Initialize everything
@@ -16,6 +15,8 @@ var PageManager = function(container, pages, titles)
 							position : "absolute"
 						})
 						.appendTo(container);
+
+	this.titlePrefix = "";
 
 	// this will keep a reference to all our page frames
 	// we may not need this but that way we have it
@@ -31,11 +32,7 @@ var PageManager = function(container, pages, titles)
 		var pageFrame = 
 			$("<iframe src='" + pages[p] + "'></iframe>")
 				.css({
-					border : "none",
-					position : "absolute",
-					top : 0,
 					left : (p * pageSliderWidth),
-					height : "100%",
 					width : pageSliderWidth
 				})
 				.appendTo(this.pageSlider);
@@ -61,12 +58,30 @@ PageManager.prototype.GetPageIndexByName = function(name)
 	return 0;
 }
 
+PageManager.prototype.GetFrameTitle = function(index)
+{
+	if (typeof index === "string")
+		index = this.GetPageIndexByName(index);
+
+	return this.frames[index].contents().find("title").html();
+}
+
+PageManager.prototype.SetPageTitle = function(newTitle)
+{
+	$(document).find("title").html(this.titlePrefix + " - " + newTitle);
+}
+
+PageManager.prototype.SetTitlePrefix = function(prefix)
+{
+	this.titlePrefix = prefix;
+}
+
 PageManager.prototype.GoToPage = function(pageName)
 {
 	var index = this.GetPageIndexByName(pageName);
 	var pos = -index * this.pageSlider.width();
 
-	console.log(pos);
+	this.SetPageTitle( this.GetFrameTitle(index) );
 
 	this.pageSlider.animate({
 		left : pos

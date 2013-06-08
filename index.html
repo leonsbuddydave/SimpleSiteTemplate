@@ -7,8 +7,16 @@
 		<title>PageTitle</title>
 	</head>
 	<body>
-		<!-- ALL STYLES GO HERE BECAUSE ON PAGE APP -->
+		<!-- ALL STYLES GO HERE BECAUSE ONE PAGE APP -->
 		<style type="text/css">
+
+			iframe
+			{
+				border: none;
+				position: absolute;
+				top: 0;
+				height: 100%;
+			}
 
 		</style>
 		<!-- END OF STYLES -->
@@ -27,14 +35,21 @@
 			// Create a page manager
 			var pageManager = new PageManager(
 									$("#pageContainer"),
-									["home.html", "about.html", "schedule.html", "media.html", "contact.html"]
+									["pages/home.html", "about.html", "schedule.html", "media.html", "contact.html"]
 								);
+
+			pageManager.SetTitlePrefix("Test Site");
 
 			var router = new Router();
 
+			router.On("", function()
+			{
+				pageManager.GoToPage("home");
+			});
+
 			router.On("home", function()
 			{
-				console.log("yo nigga");
+				pageManager.GoToPage("home");
 			});
 
 		</script>
