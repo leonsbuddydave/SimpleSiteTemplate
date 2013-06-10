@@ -18,9 +18,14 @@ var PageManager = function(container, pages, titles)
 
 	this.titlePrefix = "";
 
+	this.currentPageIndex = 0;
+
 	// this will keep a reference to all our page frames
 	// we may not need this but that way we have it
 	this.frames = [];
+
+	// Make the slider contain all things
+	this.pageSlider.css("width", (this.pages.length * 100) + "%");
 
 	// Get the width here to avoid recalculation
 	var pageSliderWidth = this.pageSlider.width();
@@ -28,14 +33,14 @@ var PageManager = function(container, pages, titles)
 	// Attach all our pages to the container as iframes
 	for (var p = 0; p < pages.length; p++)
 	{
-		var contentContainer = $("<div class='contentContainer'></div>").appendTo(this.pageSlider);
+		var contentContainer = $("<div class='contentContainer'></div>")
+									.css("width", (100 / this.pages.length) + "%")
+									.appendTo(this.pageSlider);
 
 		// Create our frame and add it to the container
 		var pageFrame = 
-			$("<iframe src='" + pages[p] + "'></iframe>")
+			$("<iframe src='" + pages[p] + "?" + Math.random() + "'></iframe>")
 				.css({
-					left : (p * pageSliderWidth),
-					width : pageSliderWidth,
 					opacity : 0
 				})
 				.appendTo(contentContainer);
@@ -92,33 +97,59 @@ PageManager.prototype.SetTitlePrefix = function(prefix)
 
 PageManager.prototype.GoToPage = function(pageName)
 {
+	// Get some shit
 	var index = this.GetPageIndexByName(pageName);
 	var pos = (-index * 100) + "%";
 
-	this.SetPageTitle( this.GetFrameTitle(index) );
+	// // we're ALREADY THERE, IDIOT
+	// if (index === this.currentPageIndex)
+	// 	return;
 
+	this.currentPageIndex = index;
+
+	// Change the actual page
+	this.SetPageTitle( this.GetFrameTitle(index) );
 	this.pageSlider.animate({
 		left : pos
+	});
+
+	// Change the height of the current container to match
+	// the height of the iframe
+	var containerHeight = this.frames[index].contents().height();
+
+	// Animate the containing element to the right height
+	this.container.animate({
+		height: containerHeight
+	});
+
+	// Animate the contained frame to the right height
+	this.frames[index].animate(
+	{
+		height: containerHeight
+	});
+
+	// Trigger the event, letting errbody know what's up
+	$.event.trigger({
+		type : "pageChange",
+		pageHeight : containerHeight,
+		pageY : this.container.position().top,
+		el : this.container
 	});
 }
 
 PageManager.prototype.Resize = function()
 {
 	this.container.css({
-		"width" : $(window).width(),
 		"height" : $(window).height()
 	});
 
-	// Get the width here to avoid recalculation
-	var pageSliderWidth = this.pageSlider.width();
+	// the height of the iframe
+	var containerHeight = this.frames[this.currentPageIndex].contents().height();
 
-	for (var p = 0; p < this.frames.length; p++)
-	{
-		// Resize and reposition our frames
-		this.frames[p]
-			.css({
-				"width" : pageSliderWidth,
-				"left" : p * pageSliderWidth
-			});
-	}
+	$.event.trigger({
+		type : "pageChange",
+		pageHeight : containerHeight,
+		pageY : this.container.position().top,
+		el : this.container
+	});
 }

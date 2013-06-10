@@ -1,18 +1,66 @@
 <!DOCTYPE html>
 	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/ >
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 		<script type="text/javascript" src="js/helper-object.js"></script>
 		<script type="text/javascript" src="js/router.js"></script>
 		<script type="text/javascript" src="js/page-manager.js"></script>
+		<script type="text/javascript" src="js/dynamic-footer.js"></script>
 		<title>PageTitle</title>
 	</head>
 	<body>
+		<style type="text/css">
+		html, body, div, span, applet, object, iframe,
+		h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+		a, abbr, acronym, address, big, cite, code,
+		del, dfn, em, img, ins, kbd, q, s, samp,
+		small, strike, strong, sub, sup, tt, var,
+		b, u, i, center,
+		dl, dt, dd, ol, ul, li,
+		fieldset, form, label, legend,
+		table, caption, tbody, tfoot, thead, tr, th, td,
+		article, aside, canvas, details, embed, 
+		figure, figcaption, footer, header, hgroup, 
+		menu, nav, output, ruby, section, summary,
+		time, mark, audio, video {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+		/* HTML5 display-role reset for older browsers */
+		article, aside, details, figcaption, figure, 
+		footer, header, hgroup, menu, nav, section {
+			display: block;
+		}
+		body {
+			line-height: 1;
+		}
+		ol, ul {
+			list-style: none;
+		}
+		blockquote, q {
+			quotes: none;
+		}
+		blockquote:before, blockquote:after,
+		q:before, q:after {
+			content: '';
+			content: none;
+		}
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+		</style>
 		<!-- ALL STYLES GO HERE BECAUSE ONE PAGE APP -->
 		<style type="text/css">
 
 			body
 			{
 				overflow-x: hidden;
+				height: 100%;
 			}
 
 			header
@@ -29,10 +77,10 @@
 			{
 				position: relative;
 				width: 50%;
-				min-width: 600px;
 				height: 100%;
 				margin: 0 auto;
 				background-color: #f00;
+				overflow: hidden;
 			}
 
 				nav div
@@ -74,30 +122,39 @@
 				z-index: -100;
 			}
 
+				#pageSlider
+				{
+					position: absolute;
+					height: 100%;
+				}
+
 			iframe
 			{
 				border: none;
-				position: absolute;
+				position: relative;
 				top: 0;
-				height: 100%;
-				width: 100%;
+				width: 60%;
+				overflow: hidden;
+				box-sizing: border-box;
+				margin-left: 20%;
+				outline: solid 1px green;
+				padding: 0;
 			}
 
 			footer
 			{
 				position: absolute;
 				left: 0;
-				bottom: 0;
 				width: 100%;
 				height: 8%;
 				background-color: #0f0;
+
 			}
 
 				footer > div
 				{
 					position: relative;
 					width: 50%;
-					min-width: 600px;
 					height: 100%;
 					margin: 0 auto;
 					background-color: #f00;
@@ -107,19 +164,15 @@
 			{
 				position: relative;
 				margin: 0 auto;
-				outline: solid 1px green;
-				height: 100%;
+				width: 100%;
+				float: left;
+				background-color: #e3a715;
 			}
 
 			/* Big Screens */
 			@media (min-width: 1050px)
 			{
 				nav
-				{
-					width: 60%;
-				}
-
-				.contentContainer
 				{
 					width: 60%;
 				}
@@ -143,6 +196,12 @@
 					width: 100%;
 				}
 
+				iframe
+				{
+					width: 100%;
+					margin-left: 0;
+				}
+
 				footer > div
 				{
 					width: 100%;
@@ -150,9 +209,38 @@
 			}
 
 			/* Phone Screens */
-			@media (max-width: 549px)
+			@media (min-width: 0) and (max-width: 600px)
 			{
+				header
+				{
 
+				}
+
+					nav
+					{
+						width: 100%;
+					}
+
+					nav > div
+					{
+						font-size: 10pt;
+					}
+
+				iframe
+				{
+					width: 100%;
+					margin: 0;
+				}
+
+				footer
+				{
+					width: 100%;
+				}
+
+					footer > div
+					{
+						width: 100%;
+					}
 			}
 
 		</style>
@@ -182,7 +270,7 @@
 			// Create a page manager
 			var pageManager = new PageManager(
 									$("#pageContainer"),
-									["pages/home.html", "about.html", "schedule.html", "media.html", "contact.html"]
+									["pages/home.html", "pages/about.html", "schedule.html", "media.html", "contact.html"]
 								);
 
 			pageManager.SetTitlePrefix("Test Site");
@@ -211,6 +299,8 @@
 			{
 				pageManager.GoToPage("contact");
 			});
+
+			var footer = new DynamicFooter($("footer"), $("#pageContainer"), .08);
 
 		</script>
 	</body>
