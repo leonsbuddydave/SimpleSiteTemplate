@@ -28,14 +28,19 @@ var PageManager = function(container, pages, titles)
 	// Attach all our pages to the container as iframes
 	for (var p = 0; p < pages.length; p++)
 	{
+		var contentContainer = $("<div class='contentContainer'></div>").appendTo(this.pageSlider);
+
 		// Create our frame and add it to the container
 		var pageFrame = 
 			$("<iframe src='" + pages[p] + "'></iframe>")
 				.css({
 					left : (p * pageSliderWidth),
-					width : pageSliderWidth
+					width : pageSliderWidth,
+					opacity : 0
 				})
-				.appendTo(this.pageSlider);
+				.appendTo(contentContainer);
+
+		this.bindToContext(pageFrame, "load", this.FadeInFrame, this);
 
 		// Save it for us. My precious.
 		this.frames.push( pageFrame );
@@ -44,6 +49,15 @@ var PageManager = function(container, pages, titles)
 	// Make sure that this whole thing can adjust, since we can't
 	// rely on CSS to do this right in this case
 	this.bindToContext(window, "resize", this.Resize, this);
+	this.Resize();
+}
+
+PageManager.prototype = new HelperObject();
+
+// Fades in a given frame onload
+PageManager.prototype.FadeInFrame = function(e)
+{
+	$(e.originalEvent.target).animate({ opacity : 1.0 }, 1000);
 }
 
 PageManager.prototype.GetPageIndexByName = function(name)
@@ -54,7 +68,6 @@ PageManager.prototype.GetPageIndexByName = function(name)
 		if (pageName === name)
 			return p;
 	}
-
 	return 0;
 }
 
@@ -68,6 +81,7 @@ PageManager.prototype.GetFrameTitle = function(index)
 
 PageManager.prototype.SetPageTitle = function(newTitle)
 {
+	console.log("Setting New Title: " + newTitle);
 	$(document).find("title").html(this.titlePrefix + " - " + newTitle);
 }
 
@@ -79,20 +93,22 @@ PageManager.prototype.SetTitlePrefix = function(prefix)
 PageManager.prototype.GoToPage = function(pageName)
 {
 	var index = this.GetPageIndexByName(pageName);
-	var pos = -index * this.pageSlider.width();
+	var pos = (-index * 100) + "%";
 
 	this.SetPageTitle( this.GetFrameTitle(index) );
 
 	this.pageSlider.animate({
 		left : pos
-	},
-	{
-
 	});
 }
 
 PageManager.prototype.Resize = function()
 {
+	this.container.css({
+		"width" : $(window).width(),
+		"height" : $(window).height()
+	});
+
 	// Get the width here to avoid recalculation
 	var pageSliderWidth = this.pageSlider.width();
 

@@ -16,6 +16,8 @@ var Router = function(homePage, homePageCallback)
 	}
 }
 
+Router.prototype = new HelperObject();
+
 Router.prototype.AddPath = function(hash)
 {
 	this.routes.push(hash);

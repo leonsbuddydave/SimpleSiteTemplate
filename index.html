@@ -1,7 +1,7 @@
-<html>
+<!DOCTYPE html>
 	<head>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-		<script type="text/javascript" src="js/object.js"></script>
+		<script type="text/javascript" src="js/helper-object.js"></script>
 		<script type="text/javascript" src="js/router.js"></script>
 		<script type="text/javascript" src="js/page-manager.js"></script>
 		<title>PageTitle</title>
@@ -10,12 +10,149 @@
 		<!-- ALL STYLES GO HERE BECAUSE ONE PAGE APP -->
 		<style type="text/css">
 
+			body
+			{
+				overflow-x: hidden;
+			}
+
+			header
+			{
+				width: 100%;
+				position: absolute;
+				left: 0;
+				top: 0;
+				background-color: #00f;
+				height: 8%;
+			}
+
+			nav
+			{
+				position: relative;
+				width: 50%;
+				min-width: 600px;
+				height: 100%;
+				margin: 0 auto;
+				background-color: #f00;
+			}
+
+				nav div
+				{
+					box-sizing: border-box;
+					width: 20%;
+					float: left;
+					height: 100%;
+					display: table;
+				}
+
+				nav a
+				{
+					display: table-cell;
+					text-align: center;
+					vertical-align: middle;
+					text-transform: uppercase;
+
+					text-decoration: none;
+					color: #fff;
+					font-family: Arial;
+					font-weight: bold;
+				}
+
+				nav a:hover
+				{
+					background-color: #0f0;
+					color: #000;
+				}
+
+			#pageContainer
+			{
+				overflow: hidden;
+				position: absolute;
+				width: 100%;
+				height: 80%;
+				top: 8%;
+				left: 0;
+				z-index: -100;
+			}
+
 			iframe
 			{
 				border: none;
 				position: absolute;
 				top: 0;
 				height: 100%;
+				width: 100%;
+			}
+
+			footer
+			{
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				width: 100%;
+				height: 8%;
+				background-color: #0f0;
+			}
+
+				footer > div
+				{
+					position: relative;
+					width: 50%;
+					min-width: 600px;
+					height: 100%;
+					margin: 0 auto;
+					background-color: #f00;
+				}
+
+			.contentContainer
+			{
+				position: relative;
+				margin: 0 auto;
+				outline: solid 1px green;
+				height: 100%;
+			}
+
+			/* Big Screens */
+			@media (min-width: 1050px)
+			{
+				nav
+				{
+					width: 60%;
+				}
+
+				.contentContainer
+				{
+					width: 60%;
+				}
+
+				footer > div
+				{
+					width: 60%;
+				}
+			}
+
+			/* Small Screens */
+			@media (min-width: 550px) and (max-width: 1049px)
+			{
+				nav
+				{
+					width: 100%;
+				}
+
+				.contentContainer
+				{
+					width: 100%;
+				}
+
+				footer > div
+				{
+					width: 100%;
+				}
+			}
+
+			/* Phone Screens */
+			@media (max-width: 549px)
+			{
+
 			}
 
 		</style>
@@ -23,15 +160,25 @@
 
 		<header>
 
+			<nav>
+				<div><a href="#home">Home</a></div>
+				<div><a href="#about">About</a></div>
+				<div><a href="#schedule">Schedule</a></div>
+				<div><a href="#media">Media</a></div>
+				<div><a href="#contact">Contact</a></div>
+			</nav>
+
 		</header>
 
 		<div id="pageContainer">
 
 		</div>
 
+		<footer>
+			<div></div>
+		</footer>
+
 		<script type="text/javascript">
-
-
 			// Create a page manager
 			var pageManager = new PageManager(
 									$("#pageContainer"),
@@ -44,6 +191,26 @@
 							{
 								pageManager.GoToPage("home");
 							});
+
+			router.On("about", function()
+			{
+				pageManager.GoToPage("about");
+			})
+
+			router.On("schedule", function()
+			{
+				pageManager.GoToPage("schedule");
+			});
+
+			router.On("media", function()
+			{
+				pageManager.GoToPage("media");
+			});
+
+			router.On("contact", function()
+			{
+				pageManager.GoToPage("contact");
+			});
 
 		</script>
 	</body>
