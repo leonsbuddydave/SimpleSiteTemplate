@@ -19,11 +19,6 @@ var PageManager = function(container, pages, titles)
 
 PageManager.prototype = new HelperObject();
 
-PageManager.prototype.PageReady = function(e)
-{
-
-}
-
 // Fades in a given frame onload
 PageManager.prototype.FadeInFrame = function(e)
 {
@@ -64,7 +59,6 @@ PageManager.prototype.GetPageFromServer = function(pageURL, callback)
 {
 	$.ajax({
 		url : pageURL,
-
 	}).done(callback);
 }
 
@@ -73,16 +67,13 @@ PageManager.prototype.GoToPage = function(pageName)
 	// Get some shit
 	var index = (isNaN(pageName) ? this.GetPageIndexByName(pageName) : pageName);
 	var pos = (-index * 100) + "%";
-
-	// // we're ALREADY THERE, IDIOT
-	// if (index === this.currentPageIndex)
-	// 	return;
-
 	var self = this;
 
 	this.GetPageFromServer(this.pages[index], function(data)
 	{
 		self.nextPage = self.AttachPage(data);
+
+		self.SetPageTitle( self.GetPageSubtitle(self.nextPage) );
 
 		$.event.trigger({
 			type : "pageChangeStart",
@@ -107,12 +98,15 @@ PageManager.prototype.GoToPage = function(pageName)
 		{
 			self.MovePageOneWidthLeft(self.currentPage, function()
 			{
-				this.remove();
+				this.remove();				
 			});
 		}
 	});
+}
 
-	// Trigger the event, letting errbody know what's up
+PageManager.prototype.GetPageSubtitle = function(page)
+{
+	return page.find(".title").text();
 }
 
 PageManager.prototype.MovePageOneWidthLeft = function(page, callback)
@@ -128,10 +122,26 @@ PageManager.prototype.MovePageOneWidthLeft = function(page, callback)
 
 PageManager.prototype.AttachPage = function(data)
 {
-	var page = $("<div class='contentContainer'><div class='contentBound'>" + data + "</div></div>").css("left", "100%");
-	this.container.append(page);
+	// turn that ugly little data brick into a snazzy documentFragment
+	// a snazzy, jazzed-up little documentFragment
+	// look at it go, with its optimized layout flow
+	// all those cute little boxes and whatsits being calculated outside the DOM
+	// you'll get your time to shine, little documentFragment
+	var pageFragment = $(data);
 
-	return page;
+
+	// Create the container that the page will go into:
+	// contentContainer - the full-width container
+	// contentBound - the narrower part that will compress the actual content
+	var pageContainer = $("<div class='contentContainer'><div class='contentBound'></div></div>");
+	pageContainer.css("left", "100%");
+
+	// insert that cute little document fragment into our containers
+	pageContainer.find('.contentBound').append(pageFragment);
+
+	this.container.append(pageContainer);
+
+	return pageContainer;
 }
 
 PageManager.prototype.Resize = function()

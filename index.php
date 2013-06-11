@@ -11,7 +11,7 @@
 
 			if (mobile())
 			{
-				window.location = "mobile.php?p=" + location.hash.substr(1);
+				//window.location = "mobile.php?p=" + location.hash.substr(1);
 			}
 		</script>
 
@@ -127,10 +127,9 @@
 
 			#pageContainer
 			{
-				overflow: hidden;
 				position: absolute;
 				width: 100%;
-				height: 80%;
+				min-height: 84%;
 				top: 8%;
 				left: 0;
 				z-index: -100;
@@ -168,12 +167,16 @@
 				left: 0;
 				margin: 0 auto;
 				width: 100%;
+				min-height: 100%;
+				height: auto;
 				background-color: #e3a715;
 				z-index: -100;
+				padding-bottom: 10%;
 			}
 
 				.contentBound
 				{
+					min-height: 100%;
 					position: relative;
 					width: 60%;
 					margin: 0 auto;
@@ -206,11 +209,10 @@
 					width: 100%;
 				}
 
-				iframe
-				{
-					width: 100%;
-					margin-left: 0;
-				}
+					.contentBound
+					{
+						width: 100%;
+					}
 
 				footer > div
 				{
@@ -236,13 +238,17 @@
 						font-size: 10pt;
 					}
 
-				iframe
+				.contentContainer
 				{
 					width: 100%;
-					height: 100%;
-					margin: 0;
-					overflow-y: scroll;
 				}
+
+					.contentBound
+					{
+						width: 100%;
+						overflow: hidden;
+					}
+
 
 				footer
 				{
@@ -283,7 +289,7 @@
 			// Create a page manager
 			var pageManager = new PageManager(
 									$("#pageContainer"),
-									["pages/home.php", "pages/about.html", "schedule.html", "media.html", "contact.html"]
+									["pages/home.php", "pages/about.php", "pages/schedule.php", "pages/media.php", "pages/contact.php"]
 								);
 
 			pageManager.SetTitlePrefix("Test Site");

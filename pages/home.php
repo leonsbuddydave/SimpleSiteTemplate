@@ -2,7 +2,11 @@
 
 <span class="title">Home</span>
 
-<div>
+<style type="text/css">
+	.bigass { font-size: 72pt; }
+</style>
+
+<div class="bigass">
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod in tortor a ultricies. Nam quis viverra urna, id eleifend diam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam luctus mattis tortor id placerat. Ut lobortis dignissim felis sit amet consequat. Donec mollis hendrerit lectus, sit amet vulputate nulla dignissim ut. Phasellus at magna a nisi vehicula congue et quis massa. Ut id nisl rhoncus, iaculis urna id, lobortis mi. Cras risus ligula, suscipit quis rutrum in, eleifend a nunc.
 
 Aliquam ultricies orci vitae molestie interdum. Integer nec condimentum metus. Proin tempor, enim quis rhoncus hendrerit, tellus augue euismod felis, at dignissim quam urna sed ante. Nulla justo eros, auctor et vestibulum at, egestas id velit. Vestibulum scelerisque metus sed dui interdum tempor. Ut quis iaculis velit. Etiam mattis ullamcorper magna, non laoreet enim tincidunt et. Vestibulum at vestibulum felis.
