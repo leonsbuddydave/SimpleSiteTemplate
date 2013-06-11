@@ -8,21 +8,20 @@ var Router = function(homePage, homePageCallback)
 
 	// optional arguments allow us to bind a homepage right away
 	// that we can jump to when everything finishes loading
-	if (homePage && homePageCallback && !this.HasHash())
+	if (homePage && homePageCallback)
 	{
 		this.On("", homePageCallback);
 		this.On(homePage, homePageCallback);
 	}
 
-	this.bindToContext(window, "pagesReady", this.Ready, this);
+	this.bindToContext(window, "ready", this.Ready, this);
 }
 
 Router.prototype = new HelperObject();
 
 Router.prototype.Ready = function(e)
 {
-	console.log("yo NIGGA");
-
+	console.log("YO NIGGA ROUTING");
 	this.Route();
 }
 
