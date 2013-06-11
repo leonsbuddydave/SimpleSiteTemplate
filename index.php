@@ -15,7 +15,7 @@
 			}
 		</script>
 
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.js"></script>
 		<script type="text/javascript" src="js/helper-object.js"></script>
 		<script type="text/javascript" src="js/router.js"></script>
 		<script type="text/javascript" src="js/page-manager.js"></script>
@@ -142,19 +142,6 @@
 					height: 100%;
 				}
 
-			iframe
-			{
-				border: none;
-				position: relative;
-				top: 0;
-				width: 60%;
-				overflow: hidden;
-				box-sizing: border-box;
-				margin-left: 20%;
-				outline: solid 1px green;
-				padding: 0;
-			}
-
 			footer
 			{
 				position: fixed;
@@ -176,12 +163,21 @@
 
 			.contentContainer
 			{
-				position: relative;
+				position: absolute;
+				top: 0;
+				left: 0;
 				margin: 0 auto;
 				width: 100%;
-				float: left;
 				background-color: #e3a715;
+				z-index: -100;
 			}
+
+				.contentBound
+				{
+					position: relative;
+					width: 60%;
+					margin: 0 auto;
+				}
 
 			/* Big Screens */
 			@media (min-width: 1050px)
@@ -276,7 +272,7 @@
 		</header>
 
 		<div id="pageContainer">
-
+			
 		</div>
 
 		<footer>
@@ -287,7 +283,7 @@
 			// Create a page manager
 			var pageManager = new PageManager(
 									$("#pageContainer"),
-									["pages/home.html", "pages/about.html", "schedule.html", "media.html", "contact.html"]
+									["pages/home.php", "pages/about.html", "schedule.html", "media.html", "contact.html"]
 								);
 
 			pageManager.SetTitlePrefix("Test Site");

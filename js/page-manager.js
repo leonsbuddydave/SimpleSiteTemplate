@@ -8,78 +8,20 @@ var PageManager = function(container, pages, titles)
 	this.container = container;
 	this.pages = pages;
 	this.titles = titles;
-	this.pageSlider = $("<div></div>")
-						.css({
-							width : "100%",
-							height : "100%",
-							position : "absolute"
-						})
-						.appendTo(container);
 
 	this.titlePrefix = "";
 
 	this.currentPageIndex = 0;
 
-	// this will keep track of how many pages are loaded
-	// and completely ready for interaction
-	this.pagesReady = 0;
-
-	// this will keep a reference to all our page frames
-	// we may not need this but that way we have it
-	this.frames = [];
-
-	// Make the slider contain all things
-	this.pageSlider.css("width", (this.pages.length * 100) + "%");
-
-	// Get the width here to avoid recalculation
-	var pageSliderWidth = this.pageSlider.width();
-
-	// Attach all our pages to the container as iframes
-	for (var p = 0; p < pages.length; p++)
-	{
-		var contentContainer = $("<div class='contentContainer'></div>")
-									.css("width", (100 / this.pages.length) + "%")
-									.appendTo(this.pageSlider);
-
-		// Create our frame and add it to the container
-		var pageFrame = 
-			$("<iframe src='" + pages[p] + "?" + Math.random() + "'></iframe>")
-				.css({
-					opacity : 0,
-					height : this.container.height()
-				})
-				.appendTo(contentContainer);
-
-		// Make sure we know when this frame is ready
-		this.bindToContext(pageFrame, "load", this.PageReady, this);
-
-		// Save it for us. My precious.
-		this.frames.push( pageFrame );
-	}
-
-	// Make sure that this whole thing can adjust, since we can't
-	// rely on CSS to do this right in this case
-	this.bindToContext(window, "resize", this.Resize, this);
-	this.Resize();
+	this.currentPage = null;
+	this.nextPage = null;
 }
 
 PageManager.prototype = new HelperObject();
 
 PageManager.prototype.PageReady = function(e)
 {
-	// increment the loaded page counter
-	this.pagesReady++;
 
-	// If this means all the pages are ready, fire!
-	if (this.pagesReady === this.pages.length)
-	{
-		$.event.trigger({
-			type : "pagesReady"
-		});
-	}
-
-	// Bring this frame in
-	this.FadeInFrame(e);
 }
 
 // Fades in a given frame onload
@@ -118,6 +60,14 @@ PageManager.prototype.SetTitlePrefix = function(prefix)
 	this.titlePrefix = prefix;
 }
 
+PageManager.prototype.GetPageFromServer = function(pageURL, callback)
+{
+	$.ajax({
+		url : pageURL,
+
+	}).done(callback);
+}
+
 PageManager.prototype.GoToPage = function(pageName)
 {
 	// Get some shit
@@ -128,38 +78,60 @@ PageManager.prototype.GoToPage = function(pageName)
 	// if (index === this.currentPageIndex)
 	// 	return;
 
-	this.currentPageIndex = index;
+	var self = this;
 
-	// Change the actual page
-	this.SetPageTitle( this.GetFrameTitle(index) );
-	this.pageSlider.animate({
-		left : pos
-	});
-
-	// Change the height of the current container to match
-	// the height of the iframe
-	var containerHeight = this.frames[index].contents().height();
-
-	console.log(containerHeight);
-
-	// Animate the containing element to the right height
-	this.container.animate({
-		height: containerHeight
-	});
-
-	// Animate the contained frame to the right height
-	this.frames[index].animate(
+	this.GetPageFromServer(this.pages[index], function(data)
 	{
-		height: containerHeight
+		self.nextPage = self.AttachPage(data);
+
+		$.event.trigger({
+			type : "pageChangeStart",
+			el : self.container,
+			page : self.nextPage
+		});
+
+		// bring in the NEW FUCKER
+		self.MovePageOneWidthLeft(self.nextPage, function()
+		{
+			self.currentPage = self.nextPage;
+
+			$.event.trigger({
+				type : "pageChangeComplete",
+				el : self.container,
+				page : self.nextPage
+			});
+		});
+
+		// get rid of that OLD FUCKER
+		if (self.currentPage !== null)
+		{
+			self.MovePageOneWidthLeft(self.currentPage, function()
+			{
+				this.remove();
+			});
+		}
 	});
 
 	// Trigger the event, letting errbody know what's up
-	$.event.trigger({
-		type : "pageChange",
-		pageHeight : containerHeight,
-		pageY : this.container.position().top,
-		el : this.container
+}
+
+PageManager.prototype.MovePageOneWidthLeft = function(page, callback)
+{
+	page.animate(
+	{
+		left : "-=100%"
+	},
+	{
+		complete : callback
 	});
+}
+
+PageManager.prototype.AttachPage = function(data)
+{
+	var page = $("<div class='contentContainer'><div class='contentBound'>" + data + "</div></div>").css("left", "100%");
+	this.container.append(page);
+
+	return page;
 }
 
 PageManager.prototype.Resize = function()
