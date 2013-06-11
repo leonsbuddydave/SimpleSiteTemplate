@@ -20,6 +20,10 @@ var PageManager = function(container, pages, titles)
 
 	this.currentPageIndex = 0;
 
+	// this will keep track of how many pages are loaded
+	// and completely ready for interaction
+	this.pagesReady = 0;
+
 	// this will keep a reference to all our page frames
 	// we may not need this but that way we have it
 	this.frames = [];
@@ -41,11 +45,13 @@ var PageManager = function(container, pages, titles)
 		var pageFrame = 
 			$("<iframe src='" + pages[p] + "?" + Math.random() + "'></iframe>")
 				.css({
-					opacity : 0
+					opacity : 0,
+					height : this.container.height()
 				})
 				.appendTo(contentContainer);
 
-		this.bindToContext(pageFrame, "load", this.FadeInFrame, this);
+		// Make sure we know when this frame is ready
+		this.bindToContext(pageFrame, "load", this.PageReady, this);
 
 		// Save it for us. My precious.
 		this.frames.push( pageFrame );
@@ -58,6 +64,23 @@ var PageManager = function(container, pages, titles)
 }
 
 PageManager.prototype = new HelperObject();
+
+PageManager.prototype.PageReady = function(e)
+{
+	// increment the loaded page counter
+	this.pagesReady++;
+
+	// If this means all the pages are ready, fire!
+	if (this.pagesReady === this.pages.length)
+	{
+		$.event.trigger({
+			type : "pagesReady"
+		});
+	}
+
+	// Bring this frame in
+	this.FadeInFrame(e);
+}
 
 // Fades in a given frame onload
 PageManager.prototype.FadeInFrame = function(e)
@@ -98,7 +121,7 @@ PageManager.prototype.SetTitlePrefix = function(prefix)
 PageManager.prototype.GoToPage = function(pageName)
 {
 	// Get some shit
-	var index = this.GetPageIndexByName(pageName);
+	var index = (isNaN(pageName) ? this.GetPageIndexByName(pageName) : pageName);
 	var pos = (-index * 100) + "%";
 
 	// // we're ALREADY THERE, IDIOT
@@ -116,6 +139,8 @@ PageManager.prototype.GoToPage = function(pageName)
 	// Change the height of the current container to match
 	// the height of the iframe
 	var containerHeight = this.frames[index].contents().height();
+
+	console.log(containerHeight);
 
 	// Animate the containing element to the right height
 	this.container.animate({
@@ -145,6 +170,8 @@ PageManager.prototype.Resize = function()
 
 	// the height of the iframe
 	var containerHeight = this.frames[this.currentPageIndex].contents().height();
+
+	console.log(containerHeight);
 
 	$.event.trigger({
 		type : "pageChange",
