@@ -7,16 +7,9 @@ var Router = function(homePage)
 	this.bindToContext(window, "ready", this.Route, this);
 
 	this.homePage = homePage;
-
-	this.bindToContext(window, "ready", this.Ready, this);
 }
 
 Router.prototype = new HelperObject();
-
-Router.prototype.Ready = function(e)
-{
-	this.Route();
-}
 
 Router.prototype.HasHash = function()
 {
