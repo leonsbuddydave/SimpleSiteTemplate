@@ -54,10 +54,7 @@
 
 			pageManager.SetTitlePrefix("Test Site");
 
-			var router = new Router("home", function()
-							{
-								pageManager.GoToPage("home");
-							});
+			var router = new Router("home");
 
 			router.On("about", function()
 			{

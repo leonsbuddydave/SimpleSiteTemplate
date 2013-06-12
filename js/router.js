@@ -41,5 +41,5 @@ Router.prototype.Route = function(e)
 	if (typeof this.bindings[hash] !== "undefined")
 		this.bindings[hash]();
 	else
-		this.bindings[homePage]();
+		this.bindings[this.homePage]();
 }
