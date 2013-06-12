@@ -1,4 +1,4 @@
-var Router = function(homePage, homePageCallback)
+var Router = function(homePage)
 {
 	this.routes = [];
 	this.bindings = {};
@@ -6,13 +6,7 @@ var Router = function(homePage, homePageCallback)
 	this.bindToContext(window, "hashchange", this.Route, this);
 	this.bindToContext(window, "ready", this.Route, this);
 
-	// optional arguments allow us to bind a homepage right away
-	// that we can jump to when everything finishes loading
-	if (homePage && homePageCallback)
-	{
-		this.On("", homePageCallback);
-		this.On(homePage, homePageCallback);
-	}
+	this.homePage = homePage;
 
 	this.bindToContext(window, "ready", this.Ready, this);
 }
@@ -21,7 +15,6 @@ Router.prototype = new HelperObject();
 
 Router.prototype.Ready = function(e)
 {
-	console.log("YO NIGGA ROUTING");
 	this.Route();
 }
 
@@ -47,4 +40,6 @@ Router.prototype.Route = function(e)
 	// if we have a binding for that hash, fire it
 	if (typeof this.bindings[hash] !== "undefined")
 		this.bindings[hash]();
+	else
+		this.bindings[homePage]();
 }
